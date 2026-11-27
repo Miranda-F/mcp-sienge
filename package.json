@@ -1,0 +1,40 @@
+{
+  "name": "mcp-sienge",
+  "version": "0.2.0",
+  "description": "Servidor MCP somente leitura para a API do Sienge (consultas GET).",
+  "type": "module",
+  "bin": {
+    "mcp-sienge": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "baixar:openapi": "node scripts/baixar-openapi.mjs",
+    "gerar:rotas": "node scripts/gerar-rotas.mjs",
+    "build": "tsc -p tsconfig.json && node scripts/copiar-gerados.mjs",
+    "start": "node dist/index.js",
+    "start:http": "node dist/http.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.7",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2",
+    "yaml": "^2.9.1"
+  }
+}
