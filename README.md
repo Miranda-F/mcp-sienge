@@ -24,10 +24,10 @@ O servidor compilado fica em `dist/index.js`.
 
 | Modo | Onde roda | Como o Openbot conecta | Onde fica a senha do Sienge |
 |---|---|---|---|
-| **HTTP** (`dist/http.js`) | Servidor/Easypanel (Docker) | Streamable HTTP + token | Só no Easypanel |
+| **HTTP** (`dist/http.js`) | Servidor (Docker) | Streamable HTTP + token | Só no servidor |
 | **stdio** (`dist/index.js`) | No computador de cada usuário | STDIO (comando local) | No Openbot de cada usuário |
 
-## Deploy no Easypanel (modo HTTP)
+## Deploy em servidor (modo HTTP, Docker)
 
 **1. Gere um token de acesso**, que é a senha para conectar ao MCP:
 
@@ -35,28 +35,32 @@ O servidor compilado fica em `dist/index.js`.
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-**2. No Easypanel**, crie um serviço do tipo **App**:
+**2. Configure as variáveis de ambiente.** Copie o [.env.example](.env.example) para `.env` e preencha:
 
-- **Fonte (Source):** o repositório Git deste projeto. O build usa o `Dockerfile` da raiz.
-- **Variáveis de ambiente (Environment):**
+```
+SIENGE_SUBDOMAIN=minhaempresa
+SIENGE_API_USER=usuario-api
+SIENGE_API_PASSWORD=senha-da-api
+MCP_AUTH_TOKENS=openbot:COLE_O_TOKEN_AQUI
+MCP_PUBLIC_URL=https://sienge-mcp.seudominio.com.br
+```
 
-  ```
-  SIENGE_SUBDOMAIN=minhaempresa
-  SIENGE_API_USER=usuario-api
-  SIENGE_API_PASSWORD=senha-da-api
-  MCP_AUTH_TOKENS=openbot:COLE_O_TOKEN_AQUI
-  MCP_PUBLIC_URL=https://sienge-mcp.seudominio.com.br
-  # opcionais: cotas do pacote
-  SIENGE_DAILY_QUOTA_REST=5000
-  SIENGE_DAILY_QUOTA_BULK=100
-  ```
+**3. Construa e rode o container:**
 
-- **Domínio (Domains):** crie o domínio com HTTPS apontando para a **porta 3000**.
-- **Volume (Mounts):** crie um volume montado em **`/data`**. Ele guarda o contador de uso diário, a auditoria e os CSVs exportados.
+```powershell
+docker build -t mcp-sienge .
+```
 
-**3. Faça o deploy** e abra `https://sienge-mcp.seudominio.com.br/health`. A resposta deve ser `{"ok":true,...}`.
+```powershell
+docker run -d --name mcp-sienge --env-file .env -p 3000:3000 -v mcp-sienge-dados:/data --restart unless-stopped mcp-sienge
+```
 
-**4. No Openbot**, vá em **Apps → Conectar a um MCP personalizado** e escolha a aba **Streamable HTTP**:
+- **Porta:** o servidor escuta na **3000**. Coloque um proxy reverso com HTTPS na frente (o domínio de `MCP_PUBLIC_URL`).
+- **Volume:** o volume em **`/data`** guarda o contador de uso diário, a auditoria e os CSVs exportados.
+
+**4. Verifique:** abra `https://sienge-mcp.seudominio.com.br/health`. A resposta deve ser `{"ok":true,...}`.
+
+**5. No Openbot**, vá em **Apps → Conectar a um MCP personalizado** e escolha a aba **Streamable HTTP**:
 
 - **Nome:** `Sienge`
 - **URL:** `https://sienge-mcp.seudominio.com.br/mcp`
@@ -68,7 +72,7 @@ Detalhes do modo HTTP:
   - `POST /mcp`: o MCP em si. É sem sessão e exige o token.
   - `GET /health`: verificação de saúde, não exige token.
   - `GET /exportacoes/<arquivo>.csv`: download dos CSVs.
-- **Vários tokens:** `MCP_AUTH_TOKENS=ana:token1,joao:token2`. O nome de cada token aparece no log de auditoria. Para revogar um acesso, apague o token e faça redeploy.
+- **Vários tokens:** `MCP_AUTH_TOKENS=ana:token1,joao:token2`. O nome de cada token aparece no log de auditoria. Para revogar um acesso, apague o token e reinicie o container.
 - **CSV exportado:** a ferramenta devolve um **link** em vez do caminho local. O nome do arquivo tem 128 bits aleatórios e expira em 24 h.
 - **Limites compartilhados:** o limite por minuto, a cota e o cache valem para todos os usuários do servidor.
 - **Segurança:** quem tiver a URL e um token consegue ler os dados do ERP. Guarde o token como uma senha. Mais de 20 tentativas erradas por minuto do mesmo IP são bloqueadas.
