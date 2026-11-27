@@ -17,14 +17,18 @@
   "scripts": {
     "baixar:openapi": "node scripts/baixar-openapi.mjs",
     "gerar:rotas": "node scripts/gerar-rotas.mjs",
+    "atualizar:rotas": "node scripts/preparar-rotas.mjs --forcar",
+    "prebuild": "node scripts/preparar-rotas.mjs",
     "build": "tsc -p tsconfig.json && node scripts/copiar-gerados.mjs",
     "start": "node dist/index.js",
     "start:http": "node dist/http.js",
+    "predev": "node scripts/preparar-rotas.mjs",
     "dev": "tsx src/index.ts",
+    "pretest": "node scripts/preparar-rotas.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

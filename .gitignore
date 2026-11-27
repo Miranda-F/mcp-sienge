@@ -3,3 +3,8 @@ dist/
 .env
 *.log
 sienge-exportacoes/
+
+# Documentação OpenAPI da Sienge e catálogo gerado a partir dela:
+# baixados/gerados no build (npm run build), não versionados.
+docs/openapi/
+src/generated/

@@ -2,6 +2,8 @@
 
 Servidor MCP **somente leitura** para a API do Sienge. Ele permite que um agente de IA (Openbot, Claude Desktop, Claude Code etc.) pesquise e responda perguntas sobre os dados do ERP. Nenhuma ferramenta altera dados: o servidor só faz requisições `GET`.
 
+> **Projeto não oficial.** Este projeto é independente e não tem vínculo com a empresa detentora do Sienge, nem é endossado por ela. "Sienge" é marca de seu respectivo titular e é citada apenas para indicar compatibilidade. O servidor usa somente a API pública documentada, com as credenciais do próprio cliente.
+
 ## Requisitos
 
 - Node.js 20 ou mais novo.
@@ -19,6 +21,8 @@ npm run build
 ```
 
 O servidor compilado fica em `dist/index.js`.
+
+O build precisa de internet: a documentação OpenAPI da Sienge **não é distribuída neste repositório**. Ela é baixada do site oficial (`https://api.sienge.com.br/v1/docs/`) para `docs/openapi/`, e o catálogo de rotas permitidas (`src/generated/rotas.json`) é gerado a partir dela. Para baixar e gerar de novo quando a Sienge atualizar a API, rode `npm run atualizar:rotas`.
 
 ## Duas formas de rodar
 
@@ -84,7 +88,7 @@ No Openbot, adicione um servidor MCP do tipo **stdio** (em Marketplace ou Settin
 | Campo | Valor |
 |---|---|
 | Comando | `node` |
-| Argumentos | `C:\Users\miran\Downloads\MCP-Sienge\dist\index.js` |
+| Argumentos | caminho completo do `dist\index.js`, ex.: `C:\projetos\mcp-sienge\dist\index.js` |
 | Variável `SIENGE_SUBDOMAIN` | subdomínio da empresa |
 | Variável `SIENGE_API_USER` | usuário da API |
 | Variável `SIENGE_API_PASSWORD` | senha da API |
@@ -100,7 +104,7 @@ Em times do Openbot, os membros conseguem ver as variáveis de ambiente dos serv
   "mcpServers": {
     "sienge": {
       "command": "node",
-      "args": ["C:\\Users\\miran\\Downloads\\MCP-Sienge\\dist\\index.js"],
+      "args": ["C:\\projetos\\mcp-sienge\\dist\\index.js"],
       "env": {
         "SIENGE_SUBDOMAIN": "minhaempresa",
         "SIENGE_API_USER": "usuario-api",
@@ -197,11 +201,15 @@ Roda o servidor direto do TypeScript.
 Para atualizar o catálogo quando a Sienge mudar a API:
 
 ```powershell
-npm run baixar:openapi
-```
-
-```powershell
-npm run gerar:rotas
+npm run atualizar:rotas
 ```
 
 A referência da API está em [docs/sienge-api-referencia.md](docs/sienge-api-referencia.md) e o plano em [PLANO.md](PLANO.md).
+
+## Contribuindo
+
+A branch `main` é protegida: alterações entram por pull request, e os testes da CI (build + `npm test`) precisam passar.
+
+## Licença
+
+[MIT](LICENSE). O código deste repositório é MIT; a documentação da API e a marca Sienge pertencem aos seus titulares e não fazem parte desta licença.
