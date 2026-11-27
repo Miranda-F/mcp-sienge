@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Entrada do modo HTTP (Streamable HTTP), para rodar em servidor/Docker (ex.: Easypanel).
+// Entrada do modo HTTP (Streamable HTTP), para rodar em servidor/Docker.
 import { carregarConfig, ErroConfiguracao } from "./config.js";
 import { carregarConfigHttp, criarServidorHttp } from "./servidor-http.js";
 

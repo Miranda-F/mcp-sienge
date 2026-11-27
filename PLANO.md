@@ -127,7 +127,7 @@ A pergunta "OAuth?" só faz sentido do lado do **MCP**:
 - Extrações assíncronas (`_async=true` → acompanhar status → baixar partes).
 - Ferramentas de resumo (inadimplência, saldo devedor, extrato de caixa/bancos).
 
-**Modo HTTP (feito em 2026-11-27):** `dist/http.js` + `Dockerfile` para o Easypanel. Streamable HTTP sem sessão, autenticação por token (`MCP_AUTH_TOKENS`, header `Authorization: Bearer` ou `X-API-Key`), senha do Sienge só no servidor e CSV entregue por link com validade de 24 h. OAuth fica para depois, se for preciso identificar cada usuário pelo login.
+**Modo HTTP (feito em 2026-11-27):** `dist/http.js` + `Dockerfile` para rodar em servidor. Streamable HTTP sem sessão, autenticação por token (`MCP_AUTH_TOKENS`, header `Authorization: Bearer` ou `X-API-Key`), senha do Sienge só no servidor e CSV entregue por link com validade de 24 h. OAuth fica para depois, se for preciso identificar cada usuário pelo login.
 
 **Fase 4 — Distribuição**
 - Publicar como pacote npm (`npx mcp-sienge`), com instruções para Openbot (servidor `stdio`: comando `npx`, args `["-y","mcp-sienge"]`, variáveis `SIENGE_*` em `env`), Claude Desktop e Claude Code.

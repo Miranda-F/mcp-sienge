@@ -1,4 +1,4 @@
-# MCP Sienge (somente leitura) — modo HTTP para Easypanel/Docker.
+# MCP Sienge (somente leitura) — modo HTTP em Docker.
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
